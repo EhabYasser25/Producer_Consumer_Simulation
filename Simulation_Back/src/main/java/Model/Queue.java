@@ -9,7 +9,7 @@ public class Queue {
     }
 
     public void update(Machine m) {
-        
+
     }
 
 }
