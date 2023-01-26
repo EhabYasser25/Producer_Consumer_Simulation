@@ -16,6 +16,7 @@ export class CanvasComponent implements OnInit {
   stage?: Konva.Stage;
   layer?: Konva.Layer;
   selected: Konva.Shape[] = []
+  productsNumber: Number = 0;
 
   constructor() { }
 
@@ -41,6 +42,10 @@ export class CanvasComponent implements OnInit {
     this.Queues.push(q0)
     this.layer?.add(q0.konvaModel) 
     this.eventListeners()
+  }
+
+  setProductsNumber(e: any) {
+    this.productsNumber = Number(e.target.value)
   }
 
   addMachine(){
