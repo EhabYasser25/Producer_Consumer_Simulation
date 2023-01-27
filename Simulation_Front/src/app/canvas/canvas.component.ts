@@ -90,7 +90,7 @@ export class CanvasComponent implements OnInit {
       let tmpMachine = this.Machines[Number(this.selected[1].id())]
       console.log(this.selected[0].id())
       console.log(tmpQueue)
-      tmpQueue.targetMachine.push(Number(this.selected[1].id()))
+      tmpQueue.targetMachines.push(Number(this.selected[1].id()))
       tmpMachine.resourcesQueues.push(Number(this.selected[0].id()))
       x1 = this.selected[0].x() + 4
       y1 = this.selected[0].y() + this.selected[0].height()/2

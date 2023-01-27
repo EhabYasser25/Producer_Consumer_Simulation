@@ -5,7 +5,7 @@ export class SimQueue{
 
     products: Product[] = []
 
-    targetMachine: number[] = []
+    targetMachines: number[] = []
     
     konvaModel = new Konva.Rect({
         x: 50,
