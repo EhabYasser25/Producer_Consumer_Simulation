@@ -1,5 +1,6 @@
 package com.example.demo.SnapShot;
 
+import com.example.demo.Facade.Command;
 import com.example.demo.Machine;
 import com.example.demo.SimQueue;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class Originator {
     private ArrayList<SimQueue> queueList;
     private Queue<String> instructions = new LinkedList<>();
 
+    private int initialProducts;
 
     public ArrayList<Machine> getMachineList() { return machineList; }
 
@@ -51,4 +53,11 @@ public class Originator {
         return instructions.poll();
     }
 
+    public int getInitialProducts() {
+        return initialProducts;
+    }
+
+    public void setInitialProducts(int initialProducts) {
+        this.initialProducts = initialProducts;
+    }
 }

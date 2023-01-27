@@ -13,9 +13,6 @@ export class ProxyService {
     return this.http.postRequest('playSimulation',command);
   }
   state() {
-    console.log("state")
-    return this.http.getRequest('state').subscribe(data => {
-      console.log(data)
-    })
+    return this.http.getRequest('state')
   }
 }

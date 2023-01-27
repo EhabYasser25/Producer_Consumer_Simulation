@@ -6,8 +6,7 @@ import { Arrow } from '../Arrow';
 import { Product } from '../Product';
 import { ProxyService } from '../ProxyService/proxy.service';
 import { Command } from '../Command';
-import { take } from 'rxjs';
-import { WebSocketService } from '../web-socket.service';
+import { delay, take } from 'rxjs';
 
 @Component({
   selector: 'simCanvas',
@@ -21,14 +20,14 @@ export class CanvasComponent implements OnInit {
   stage?: Konva.Stage;
   layer?: Konva.Layer;
   selected: Konva.Shape[] = []
-  webSocketAPI: WebSocketService;
   greeting: any;
   name: string;
+  playing: boolean = false;
+  canReplay: boolean = false;
 
   constructor(private proxy: ProxyService) { }
 
   ngOnInit(): void {
-    this.webSocketAPI = new WebSocketService(this);
     this.stage = new Konva.Stage({
       container: 'draw',   // id of container <div>
       width: innerWidth * 0.9,
@@ -57,6 +56,7 @@ export class CanvasComponent implements OnInit {
     tempMachine.konvaModel.id(String(this.Machines.length))
     this.Machines.push(tempMachine)
     this.layer?.add(tempMachine.konvaModel) 
+    this.canReplay = false;
   }
 
   addQueue(){
@@ -64,6 +64,7 @@ export class CanvasComponent implements OnInit {
     tempQueue.konvaModel.id(String(this.Queues.length))
     this.Queues.push(tempQueue)
     this.layer?.add(tempQueue.konvaModel) 
+    this.canReplay = false;
   }
 
   select(tempKonv: Konva.Shape){
@@ -118,12 +119,79 @@ export class CanvasComponent implements OnInit {
 
   addProduct(){
     this.Queues[0].queueProduct(new Product());
+    this.canReplay = false;
   }
 
-  startSimulation(){
+  replay(){
+    if(this.canReplay == false)
+      return
+    this.Queues[this.Queues.length - 1].text.text('0')
+    this.Queues[this.Queues.length - 1].konvaModel.fill('white')
+    this.startSimulation();
+  }
+
+  clear(){
+    this.Queues.slice(0);
+    this.Machines.slice(0);
+    this.layer.destroyChildren();
+    let q0 = new SimQueue()
+    q0.konvaModel.x(innerWidth * 0.85).y(innerHeight * 0.45).draggable(false).id(String(this.Queues.length))
+    this.Queues.push(q0)
+    this.layer?.add(q0.konvaModel)
+    this.layer.add(q0.setQueue())
+    this.eventListeners()
+  }
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+
+  async startSimulation(){
     console.log(this.Machines);
     console.log(this.Queues)
+    for(let i = 1; i < this.Queues.length; i++)
+      this.layer.add(this.Queues[i].setQueue());
     this.proxy.startSimulation(new Command(this.Machines, this.Queues)).pipe(take(1)).subscribe();
+    this.playing = true;
+    let lastInstruction: string;
+    while(this.playing) {
+    await this.delay(200)
+      this.proxy.state().pipe(take(1)).subscribe(
+        x => {
+          if(x == lastInstruction)
+            lastInstruction = x
+          else
+            this.evaluateInstruction(x)
+        }
+      );
+    }
+    this.canReplay = true;
+  }
+
+  evaluateInstruction(instruction: string){
+    console.log(instruction)
+    let action: string[] = instruction.split(' ');
+    switch(action[0]){
+      case 'machine':
+        this.Machines[Number(action[1])].konvaModel.fill(action[2]);
+        break;
+
+      case 'queue':
+        this.Queues[Number(action[1])].konvaModel.fill(action[2])
+        this.Queues[Number(action[1])].updateTextFromRequest(action[3]);
+        break;
+      
+      case 'end':
+        this.playing = false;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  stop() {
+    this.playing=false;
   }
 
   eventListeners(){
@@ -147,11 +215,6 @@ export class CanvasComponent implements OnInit {
         component.emptySelected()
       }
     })
-  }
-
-  getState() {
-    console.log("state")
-    this.proxy.state()
   }
 
 }

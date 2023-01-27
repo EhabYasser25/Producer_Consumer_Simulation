@@ -30,6 +30,7 @@ public class Facade {
     public ResponseEntity<String> startSimulation(@RequestBody Command simData){
         this.simMachine = simData.getMachineList();
         this.simQueues = simData.getQueueList();
+        originator.setInitialProducts(simQueues.get(0).getProducts().size());
         this.simData = simData;
         originator.setQueueList(simQueues);
         originator.setMachineList(simMachine);
@@ -54,9 +55,11 @@ public class Facade {
             tempThread.start();
         }
 
-        for(int i = 0; i < this.simQueues.get(0).getProducts().size(); i++) {
+        int noOfProducts = this.simQueues.get(0).getProducts().size();
+
+        for(int i = 0; i < noOfProducts; i++) {
             this.simQueues.get(0).notifyNext();
-            Thread.sleep((long) Math.floor(Math.random() * (4000 - 1000 + 1) + 1000));
+            Thread.sleep((int)Math.floor(Math.random() * (4000 - 1000 + 1) + 1000));
         }
         /*for(Machine m : this.simMachine)
             m.run();*/
@@ -64,7 +67,6 @@ public class Facade {
 
     @GetMapping("state")
     public String retrieveState() {
-        System.out.println("getting state");
         return originator.retrieveInstruction();
     }
 

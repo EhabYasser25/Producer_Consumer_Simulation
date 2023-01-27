@@ -28,7 +28,7 @@ export class SimQueue{
 
       queueProduct(p: Product){
         this.products.push(p);
-        this.konvaModel.fill(p.color);
+        this.konvaModel.fill(this.products[0].color);
         this.updateText()
       }
 
@@ -44,6 +44,7 @@ export class SimQueue{
       }
 
       setQueue(){
+        if(this.text == undefined){
         this.text = new Konva.Text({
           x: this.konvaModel.x() + 25,
           y: this.konvaModel.y() - 15,
@@ -51,11 +52,15 @@ export class SimQueue{
           fontSize: 13,
           align: 'center'
         });
-
+      }
         return this.text
       }
 
       updateText(){
         this.text.text(String(this.products.length))
+      }
+
+      updateTextFromRequest(num: string){
+        this.text.text(num)
       }
 }

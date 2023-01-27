@@ -31,12 +31,12 @@ public class Machine implements Runnable{
         if(targetQueue == -1)
             return;
         Thread.sleep(this.time);
+        originator.addInstruction("machine " + String.valueOf(index) +" #ffffff");
         SimQueue target = originator.getQueueList().get(targetQueue);
         target.addProduct(currentProduct);
         System.out.println("Machine " + this.index + " produced product of color " + currentProduct.getColor() + " and fed to queue " + this.targetQueue);
         target.notifyNext();
         currentProduct = null;
-        originator.addInstruction("machine " + String.valueOf(index) +" #ffffff");
         this.consume();
     }
 
@@ -45,7 +45,6 @@ public class Machine implements Runnable{
             while (this.notificationBuffer.isEmpty()){Thread.sleep(10);}
             SimQueue requester = notificationBuffer.poll();
             this.currentProduct = requester.request();
-            originator.addInstruction("queue " + String.valueOf(requester.getIndex()) + " " + requester.getProducts().peek().getColor() + " " + String.valueOf(requester.getProducts().size()));
         }
         System.out.println("Machine " + this.index + " consumed product of color " + currentProduct.getColor() + " from a queue");
         originator.addInstruction("machine " + String.valueOf(index) + " " + currentProduct.getColor());

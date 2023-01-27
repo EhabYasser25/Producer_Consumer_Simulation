@@ -5,7 +5,7 @@ import com.example.demo.SimQueue;
 
 import java.util.ArrayList;
 
-public class Command {
+public class Command implements Cloneable{
 
     private ArrayList<Machine> machineList;
     private ArrayList<SimQueue> queueList;
@@ -24,5 +24,10 @@ public class Command {
 
     public void setQueueList(ArrayList<SimQueue> queueList) {
         this.queueList = queueList;
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
     }
 }

@@ -23,7 +23,12 @@ public class SimQueue {
 
 
     public synchronized Product request(){
-        return products.poll();
+        Product p = products.poll();
+        if(products.peek() == null)
+            originator.addInstruction("queue " + String.valueOf(index) + " " + "#ffffff" + " " + String.valueOf(products.size()));
+        else
+            originator.addInstruction("queue " + String.valueOf(index) + " " + products.peek().getColor() + " " + String.valueOf(products.size()));
+        return p;
     }
 
     public void notifyNext(){
@@ -33,7 +38,9 @@ public class SimQueue {
     public void addProduct(Product P)
     {
         products.add(P);
-        originator.addInstruction("queue " + String.valueOf(products.size()));
+        originator.addInstruction("queue " + String.valueOf(getIndex()) + " " + P.getColor() + " " + String.valueOf(products.size()));
+        if(products.size() == originator.getInitialProducts())
+            originator.addInstruction("end");
     }
 
     public Queue<Product> getProducts() {
