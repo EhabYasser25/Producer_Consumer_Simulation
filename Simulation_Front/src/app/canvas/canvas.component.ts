@@ -131,9 +131,12 @@ export class CanvasComponent implements OnInit {
   }
 
   clear(){
-    this.Queues.slice(0);
-    this.Machines.slice(0);
     this.layer.destroyChildren();
+    this.Queues = []
+    this.Machines = []
+    this.layer = new Konva.Layer();
+    this.stage.add(this.layer)
+    this.layer.draw();
     let q0 = new SimQueue()
     q0.konvaModel.x(innerWidth * 0.85).y(innerHeight * 0.45).draggable(false).id(String(this.Queues.length))
     this.Queues.push(q0)
