@@ -1,4 +1,12 @@
-#prod_num_text {
-    width: auto;
-    height: auto;
+button {
+    color: black;
+    background-color: aqua;
+    width: 200px;
+    height: 50px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+button:hover {
+    cursor: pointer;
 }

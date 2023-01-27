@@ -2,6 +2,5 @@
 <button (click)="addMachine()">Machine</button>
 <button (click)="addQueue()">Queue</button>
 <button (click)="join()">Join</button>
-<button (click)="addProduct()">Add new Product</button>
-<button (click)="startSimulation()">play</button>
-<button (click)="getState()">State</button>
+<div>Products number</div>
+<textarea id="prod_num_text" (keyup)="setProductsNumber($event)"></textarea>

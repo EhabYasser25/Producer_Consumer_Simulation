@@ -2,12 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import Konva from 'konva';
 import { Machine } from '../Machine';
 import { SimQueue } from '../SimQueue';
-import { Arrow } from '../Arrow';
-import { Product } from '../Product';
-import { ProxyService } from '../ProxyService/proxy.service';
-import { Command } from '../Command';
-import { take } from 'rxjs';
-import { WebSocketService } from '../web-socket.service';
+import { Arrow } from './Arrow';
 
 @Component({
   selector: 'simCanvas',
@@ -21,14 +16,12 @@ export class CanvasComponent implements OnInit {
   stage?: Konva.Stage;
   layer?: Konva.Layer;
   selected: Konva.Shape[] = []
-  webSocketAPI: WebSocketService;
-  greeting: any;
-  name: string;
+  productsNumber: Number = 0;
 
-  constructor(private proxy: ProxyService) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.webSocketAPI = new WebSocketService(this);
+
     this.stage = new Konva.Stage({
       container: 'draw',   // id of container <div>
       width: innerWidth * 0.9,
@@ -45,11 +38,14 @@ export class CanvasComponent implements OnInit {
     this.layer.draw();
 
     let q0 = new SimQueue()
-    q0.konvaModel.x(innerWidth * 0.85).y(innerHeight * 0.45).draggable(false).id(String(this.Queues.length))
+    q0.konvaModel.x(innerWidth * 0.85).y(innerHeight * 0.45).id('0')
     this.Queues.push(q0)
-    this.layer?.add(q0.konvaModel)
-    this.layer.add(q0.setQueue())
+    this.layer?.add(q0.konvaModel) 
     this.eventListeners()
+  }
+
+  setProductsNumber(e: any) {
+    this.productsNumber = Number(e.target.value)
   }
 
   addMachine(){
@@ -68,7 +64,15 @@ export class CanvasComponent implements OnInit {
 
   select(tempKonv: Konva.Shape){
     tempKonv.shadowBlur(15)
+    console.log(tempKonv.x())
     this.selected.push(tempKonv)
+  }
+
+  emptySelected() {
+    for(let i = 0; i < this.selected.length; i++){ 
+      this.selected.at(i).shadowBlur(0)
+    }
+    this.selected.splice(0, this.selected.length)
   }
 
   join(){
@@ -83,9 +87,11 @@ export class CanvasComponent implements OnInit {
     if(this.selected[0].getClassName() == 'Rect') {
       console.log('rect')
       let tmpQueue = this.Queues[Number(this.selected[0].id())]
+      let tmpMachine = this.Machines[Number(this.selected[1].id())]
       console.log(this.selected[0].id())
       console.log(tmpQueue)
       tmpQueue.targetMachines.push(Number(this.selected[1].id()))
+      tmpMachine.resourcesQueues.push(Number(this.selected[0].id()))
       x1 = this.selected[0].x() + 4
       y1 = this.selected[0].y() + this.selected[0].height()/2
       x2 = this.selected[1].x() + this.selected[0].height()+4
@@ -109,23 +115,6 @@ export class CanvasComponent implements OnInit {
     this.emptySelected();
   }
 
-  emptySelected(){
-    for(let i = 0; i < this.selected.length; i++){ 
-      this.selected.at(i).shadowBlur(0)
-    }
-    this.selected.splice(0, this.selected.length)
-  }
-
-  addProduct(){
-    this.Queues[0].queueProduct(new Product());
-  }
-
-  startSimulation(){
-    console.log(this.Machines);
-    console.log(this.Queues)
-    this.proxy.startSimulation(new Command(this.Machines, this.Queues)).pipe(take(1)).subscribe();
-  }
-
   eventListeners(){
     let component = this;
     this.stage?.on('mousedown', function(e: any) {
@@ -133,25 +122,17 @@ export class CanvasComponent implements OnInit {
         if(component.selected.includes(e.target))
           return
         component.select(e.target)
-        if(e.target.getClassName() == 'Rect') console.log(component.Queues[e.target.id()])
-        else console.log(component.Machines[Number(e.target.id())])
-        console.log(Number(e.target.id()))
         console.log(component.selected.length)
         while(component.selected.length > 2){
           component.selected.at(0).shadowBlur(0)
-          component.selected.shift()
+          component.selected.splice(0, component.selected.length - 2)
         }
         console.log(component.selected.length)
       }
       if(e.target.getClassName() == 'Stage'){
-        component.emptySelected()
+        component.emptySelected();
       }
     })
-  }
-
-  getState() {
-    console.log("state")
-    this.proxy.state()
   }
 
 }
