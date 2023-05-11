@@ -2,6 +2,8 @@
 
 The **producer-consumer problem** is a classic synchronization problem in computer science that involves two processes, namely the *producer* and the *consumer*, that share a common buffer or queue. The goal is to ensure that the producer and consumer can work concurrently and safely without violating certain conditions.
 
+---
+
 ## Requirements
 
 The main requirements of the producer-consumer problem are:
@@ -11,6 +13,8 @@ The main requirements of the producer-consumer problem are:
 2. **Full Buffer**: If the buffer is full, the producer must wait until there is space available for new items.
 
 3. **Empty Buffer**: If the buffer is empty, the consumer must wait until there are items available for consumption.
+
+---
 
 ## Synchronization Mechanisms
 
@@ -22,12 +26,23 @@ Several synchronization mechanisms can be used to address the producer-consumer 
 
 3. **Semaphores**: Semaphores can be employed to control access to the buffer. They can represent the number of available slots in the buffer, allowing the producer and consumer to acquire or release slots as needed.
 
+---
+
 ## Solution
 
 The solution to the producer-consumer problem should ensure that the producer and consumer can work efficiently without deadlock or data inconsistency. Different synchronization mechanisms and algorithms can be employed based on the programming language and the specific requirements of the system.
 
 By properly coordinating the actions of the producer and consumer, the producer-consumer problem can be solved, allowing for safe and concurrent processing of shared resources.
 
+---
+
+## Designed & Implemented By
+- **[Islam Yasser](https://github.com/Islam0143)**
+- **[Ehab Yasser](https://github.com/EhabYasser25)**
+- **[Marwan Yasser](https://github.com/Maro1123)**
+- **[Mkario Michel](https://github.com/Mkario)**
+
+---
 
 ## Contributing
 #### If you'd like to contribute to this project, please follow these steps:
@@ -36,11 +51,13 @@ By properly coordinating the actions of the producer and consumer, the producer-
 2. Create a new branch with your changes.
 3. Submit a pull request.
 
+---
 
 ## Contact
 
 ###### If you have any questions or feedback, please feel free to contact me at eng.ehabyasser@gmail.com.
 
+---
 
 ## Acknowledgments
 
